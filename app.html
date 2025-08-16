@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚀 بطلها</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <div class="card-container">
+      <h1 class="title">🚀 بطلها</h1>
+      
+      <!-- إدخال العادة -->
+      <div id="inputSection">
+        <p class="subtitle">عاوز تبطل إيه؟</p>
+        <input type="text" id="habitInput" placeholder="مثال: تدخين" class="input-box">
+        <div class="button-group">
+          <button id="startBtn">ابدأ التحدي</button>
+          <button id="addBtn" class="plus">➕ أضف عادة جديدة</button>
+        </div>
+      </div>
+
+      <!-- سويتشرات -->
+      <div class="switchers">
+        <label class="switch">
+          <input type="checkbox" id="darkModeToggle">
+          <span class="slider round"></span>
+          <span class="icon">🌙 / ☀️</span>
+        </label>
+
+        <label class="switch">
+          <input type="checkbox" id="langToggle">
+          <span class="slider round"></span>
+          <span class="icon">🇸🇦 / 🇬🇧</span>
+        </label>
+      </div>
+
+      <!-- مكان عرض كل العادات -->
+      <div id="habitsContainer"></div>
+
+      <!-- Reset All -->
+      <div class="reset-all-container">
+        <button id="resetAllBtn" class="danger reset-all">🔄 إعادة تعيين الكل</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const addBtn = document.getElementById("addBtn");
+    const habitInput = document.getElementById("habitInput");
+    const habitsContainer = document.getElementById("habitsContainer");
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    const langToggle = document.getElementById("langToggle");
+    const resetAllBtn = document.getElementById("resetAllBtn");
+
+    let activeTimers = [];
+
+    function createHabitBlock(habitName) {
+      const block = document.createElement("div");
+      block.className = "habit-block";
+
+      block.innerHTML = `
+        <h2 class="habit-title">عاوز تبطل: ${habitName}</h2>
+        <p class="habit-subtitle">إنت اخترت "${habitName}"</p>
+        <p class="positive-message">👏 خطوة عظيمة إنك قررت تبدأ</p>
+        <p class="timer-text">⏳ المدة: 0 ثانية</p>
+        <div class="message-box">لقد بدأت رحلتك للتخلص من هذه العادة ✨</div>
+        <button class="danger resetBtn">جتني خيبة</button>
+      `;
+
+      const timerText = block.querySelector(".timer-text");
+      const messageBox = block.querySelector(".message-box");
+      const resetBtn = block.querySelector(".resetBtn");
+
+      let startTime = Date.now();
+      let elapsed = 0;
+      let timerInterval = setInterval(() => {
+        elapsed = Math.floor((Date.now() - startTime) / 1000);
+        timerText.textContent = "⏳ المدة: " + formatTime(elapsed);
+      }, 1000);
+
+      activeTimers.push(timerInterval);
+
+      resetBtn.onclick = () => {
+        clearInterval(timerInterval);
+        messageBox.textContent = "جتك خيبة 😔، معلش حاول تاني وتوب إلى الله توبة نصوحه.\nقال تعالى: إِنَّ اللَّهَ يُحِبُّ التَّوَّابِينَ وَيُحِبُّ الْمُتَطَهِّرِينَ.";
+      };
+
+      habitsContainer.appendChild(block);
+    }
+
+    function formatTime(seconds) {
+      const days = Math.floor(seconds / (3600 * 24));
+      const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      return `${days} يوم, ${hours} ساعة, ${minutes} دقيقة, ${secs} ثانية`;
+    }
+
+    startBtn.onclick = () => {
+      if (!habitInput.value.trim()) {
+        alert("من فضلك اكتب الحاجة اللي عايز تبطلها");
+        return;
+      }
+      createHabitBlock(habitInput.value.trim());
+      habitInput.value = "";
+    };
+
+    addBtn.onclick = () => {
+      if (!habitInput.value.trim()) {
+        alert("من فضلك اكتب الحاجة الجديدة اللي عايز تبطلها");
+        return;
+      }
+      createHabitBlock(habitInput.value.trim());
+      habitInput.value = "";
+    };
+
+    // Reset All
+    resetAllBtn.onclick = () => {
+      activeTimers.forEach(timer => clearInterval(timer));
+      activeTimers = [];
+      habitsContainer.innerHTML = "";
+    };
+
+    // Dark mode toggle
+    darkModeToggle.addEventListener("change", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+
+    // Language toggle
+    langToggle.addEventListener("change", () => {
+      const isEnglish = langToggle.checked;
+      document.documentElement.lang = isEnglish ? "en" : "ar";
+      document.documentElement.dir = isEnglish ? "ltr" : "rtl";
+      document.querySelector(".title").textContent = isEnglish ? "🚀 Quit It" : "🚀 بطلها";
+      document.querySelector(".subtitle").textContent = isEnglish ? "What do you want to quit?" : "عاوز تبطل إيه؟";
+      startBtn.textContent = isEnglish ? "Start Challenge" : "ابدأ التحدي";
+      addBtn.textContent = isEnglish ? "➕ Add New Habit" : "➕ أضف عادة جديدة";
+      habitInput.placeholder = isEnglish ? "Example: Smoking" : "مثال: تدخين";
+      resetAllBtn.textContent = isEnglish ? "🔄 Reset All" : "🔄 إعادة تعيين الكل";
+    });
+  </script>
+</body>
+</html>
